@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Pawn.h"
-#include "JsonUtils/RapidJsonUtils.h"
 #include "BaseTurret.generated.h"
 
 UCLASS()
@@ -15,7 +14,9 @@ class TOWERTRAP_API ABaseTurret : public APawn
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess))
 	float Radius;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess))
-	TArray<AActor*> Targets;
+	TArray<ACharacter*> Targets;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess))
+	USphereComponent* SphereComponent;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess))
 	float Damage;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess))
@@ -26,6 +27,10 @@ class TOWERTRAP_API ABaseTurret : public APawn
 	float ShootingDelay;
 	UPROPERTY()
 	float ShootingTimer;
+	UPROPERTY()
+	float AbilityCooldown;
+	UPROPERTY()
+	float AbilityTimer;
 	
 public:
 	// Sets default values for this pawn's properties
@@ -41,4 +46,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UseAbility();
+	
+	UFUNCTION()
+	void EnterDetectionRadius(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int Index, bool bSweep, const FHitResult& Hit);
+	
+	UFUNCTION()
+	void ExitDetectionRadius(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int Index);
 };
