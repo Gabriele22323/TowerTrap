@@ -9,6 +9,7 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "TowerTrap.h"
+#include "Interfaces/Interactable.h"
 
 ATowerTrapCharacter::ATowerTrapCharacter()
 {
@@ -59,6 +60,9 @@ void ATowerTrapCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATowerTrapCharacter::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ATowerTrapCharacter::LookInput);
+		
+		//Interaction
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started,this, &ATowerTrapCharacter::Interact);
 	}
 	else
 	{
@@ -117,4 +121,23 @@ void ATowerTrapCharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+
+void ATowerTrapCharacter::Interact()
+{
+	FHitResult Hit;
+	ECollisionChannel CollisionChannel = ECollisionChannel::ECC_Visibility;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	FVector CameraLocation = FirstPersonCameraComponent->GetComponentLocation();
+	FVector EndPoint = CameraLocation + GetFirstPersonCameraComponent()->GetForwardVector() * 700;
+	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, EndPoint,CollisionChannel,QueryParams))
+	{
+		if (Hit.GetActor()->Implements<UInteractable>())
+		{
+			UE_LOG(LogTemp,Log,TEXT("Interacting: %s"), *Hit.GetActor()->GetName());
+			TScriptInterface<IInteractable>(Hit.GetActor())->Execute_Interact(Hit.GetActor());
+		}
+	}
+	//DrawDebugLine(GetWorld(),CameraLocation,EndPoint,FColor::Red,0,2,3);
 }
