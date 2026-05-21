@@ -43,7 +43,10 @@ void ABaseTurret::Tick(float DeltaTime)
 		ShootingTimer = ShootingDelay;
 		//shooting logic
 		if (ClosestTarget != nullptr) //if target exists
+		{
 			DrawDebugLine(GetWorld(),GetActorLocation(),ClosestTarget->GetActorLocation(),FColor::Blue,false,3,0,1);
+			Shoot();
+		}
 	}
 	else
 	{
@@ -86,6 +89,10 @@ void ABaseTurret::VerifyAllTargets()
 			Targets.RemoveAt(i);
 		}
 	}
+}
+
+void ABaseTurret::Shoot_Implementation()
+{
 }
 		
 

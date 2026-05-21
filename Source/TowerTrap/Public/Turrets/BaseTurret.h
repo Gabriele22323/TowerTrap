@@ -58,4 +58,7 @@ public:
 	
 	UFUNCTION()
 	void VerifyAllTargets();
+	
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	void Shoot();
 };
