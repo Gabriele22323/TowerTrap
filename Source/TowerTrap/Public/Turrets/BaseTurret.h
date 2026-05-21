@@ -22,7 +22,7 @@ class TOWERTRAP_API ABaseTurret : public APawn
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess))
 	float RPM;
 	UPROPERTY()
-	AActor* ClosestTarget;
+	ACharacter* ClosestTarget;
 	UPROPERTY()
 	float ShootingDelay;
 	UPROPERTY()
@@ -60,5 +60,5 @@ public:
 	void VerifyAllTargets();
 	
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
-	void Shoot();
+	void Shoot(ACharacter* Enemy);
 };

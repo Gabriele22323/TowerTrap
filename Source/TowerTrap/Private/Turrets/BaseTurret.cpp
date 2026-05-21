@@ -45,7 +45,7 @@ void ABaseTurret::Tick(float DeltaTime)
 		if (ClosestTarget != nullptr) //if target exists
 		{
 			DrawDebugLine(GetWorld(),GetActorLocation(),ClosestTarget->GetActorLocation(),FColor::Blue,false,3,0,1);
-			Shoot();
+			Shoot(ClosestTarget);
 		}
 	}
 	else
@@ -91,7 +91,7 @@ void ABaseTurret::VerifyAllTargets()
 	}
 }
 
-void ABaseTurret::Shoot_Implementation()
+void ABaseTurret::Shoot_Implementation(ACharacter* Enemy)
 {
 }
 		
