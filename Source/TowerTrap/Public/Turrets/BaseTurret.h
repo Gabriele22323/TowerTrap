@@ -55,4 +55,7 @@ public:
 	
 	UFUNCTION()
 	void ExitDetectionRadius(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int Index);
+	
+	UFUNCTION()
+	void VerifyAllTargets();
 };

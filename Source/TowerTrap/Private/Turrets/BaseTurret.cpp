@@ -28,6 +28,7 @@ void ABaseTurret::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	float ClosestDistance = Radius + 1;
 	ClosestTarget = nullptr;
+	VerifyAllTargets();
 	for (auto Target : Targets)
 	{
 		float distance = UE::Geometry::Distance(GetActorLocation(), Target->GetActorLocation());
@@ -75,6 +76,18 @@ void ABaseTurret::ExitDetectionRadius(UPrimitiveComponent* OverlappedComponent, 
 		Targets.RemoveSwap(Character);
 	}
 }
+
+void ABaseTurret::VerifyAllTargets()
+{
+	for (int i = 0  ; i < Targets.Num(); i++)
+	{
+		if (Targets[i] == nullptr)
+		{
+			Targets.RemoveAt(i);
+		}
+	}
+}
+		
 
 
 
