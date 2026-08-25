@@ -15,7 +15,7 @@ class TOWERTRAP_API UCharacterDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0))
 	float MaxHealth;
 	UPROPERTY(EditAnywhere)
 	TMap<EDamageType,float> DamageResistances; //multiplies taken damaged base on type
@@ -23,12 +23,12 @@ public:
 	TMap<EDamageType,float> DamageMultipliers; //multiplies base damage
 	UPROPERTY(EditAnywhere)
 	bool bFlies;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0))
 	float BaseDamage;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0))
 	float Range;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,meta=(UIMin = 100, ClampMin = 100))
 	float MovementSpeed;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0,UIMax = 1, ClampMax = 1))
 	float DodgeChance;
 };
