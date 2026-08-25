@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums/EDamageType.h"
 #include "UObject/Interface.h"
 #include "Damageable.generated.h"
 
@@ -23,7 +24,7 @@ class TOWERTRAP_API IDamageable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ApplyDamage(float Damage);
+	void ApplyDamage(float Damage,EDamageType DamageType);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ApplyHeal(float HealAmount);
 };
