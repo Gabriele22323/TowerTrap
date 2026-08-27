@@ -17,3 +17,23 @@ void UBattlefieldManager::ClearEndPoints()
 {
 	EndPoints.Empty();
 }
+
+const TArray<AWaveSpawner*>& UBattlefieldManager::GetSpawners() const
+{
+	return Spawners;
+}
+
+void UBattlefieldManager::AddSpawner(AWaveSpawner* NewSpawner)
+{
+	Spawners.Add(NewSpawner);
+}
+
+void UBattlefieldManager::ClearSpawners()
+{
+	Spawners.Empty();
+}
+
+void UBattlefieldManager::SpawnNextUnit()
+{
+	
+}
