@@ -15,20 +15,22 @@ class TOWERTRAP_API UCharacterDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0))
+	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0),BlueprintReadOnly)
 	float MaxHealth;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TMap<EDamageType,float> DamageResistances; //multiplies taken damaged base on type
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TMap<EDamageType,float> DamageMultipliers; //multiplies base damage
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	bool bFlies;
-	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0))
+	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0),BlueprintReadOnly)
 	float BaseDamage;
-	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0))
+	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0),BlueprintReadOnly)
 	float Range;
-	UPROPERTY(EditAnywhere,meta=(UIMin = 100, ClampMin = 100))
+	UPROPERTY(EditAnywhere,meta=(UIMin = 100, ClampMin = 100),BlueprintReadOnly)
 	float MovementSpeed;
-	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0,UIMax = 1, ClampMax = 1))
+	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0,UIMax = 1, ClampMax = 1),BlueprintReadOnly)
 	float DodgeChance;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TSoftObjectPtr<USkeletalMesh> Mesh;
 };
