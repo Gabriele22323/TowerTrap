@@ -16,11 +16,13 @@ public:
 	// Sets default values for this actor's properties
 	AWaveSpawner();
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float SafeRange = 100; //indicates the distance needed from the last spawned actor for another to spawn
+	float SafeRange = 150; //indicates the distance needed from the last spawned actor for another to spawn
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	AActor* LastSpawnedPawn;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FReadyToSpawnSignature ReadyToSpawn;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSubclassOf<ATTCharacter> PawnClass = ATTCharacter::StaticClass();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -30,5 +32,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable)
 	void SpawnPawn(TSubclassOf<ATTCharacter> Character);
-	
+	UFUNCTION(BlueprintCallable)
+	bool SpawnNextUnit();
 };

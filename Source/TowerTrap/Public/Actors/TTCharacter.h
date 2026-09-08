@@ -16,12 +16,15 @@ class TOWERTRAP_API ATTCharacter : public ACharacter , public IDamageable
 public:
 	// Sets default values for this character's properties
 	ATTCharacter();
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(ExposeOnSpawn))
 	UCharacterDataAsset* CharacterData;
-
-protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float Health;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:
 	// Called every frame
@@ -29,4 +32,11 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void CharacterDestroy();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ApplyDamage_Implementation(float Damage, EDamageType DamageType) override;
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void Death();
 };

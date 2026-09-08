@@ -32,5 +32,5 @@ public:
 	UPROPERTY(EditAnywhere,meta=(UIMin = 0, ClampMin = 0,UIMax = 1, ClampMax = 1),BlueprintReadOnly)
 	float DodgeChance;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-	TSoftObjectPtr<USkeletalMesh> Mesh;
+	USkeletalMesh* Mesh;
 };

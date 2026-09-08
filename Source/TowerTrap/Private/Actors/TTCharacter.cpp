@@ -3,6 +3,11 @@
 
 #include "Actors/TTCharacter.h"
 
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Splines/SplineMath.h"
+#include "SubSystems/BattlefieldManager.h"
+
 
 // Sets default values
 ATTCharacter::ATTCharacter()
@@ -15,7 +20,14 @@ ATTCharacter::ATTCharacter()
 void ATTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Health = CharacterData->MaxHealth;
+	GetComponentByClass<USkeletalMeshComponent>()->SetSkeletalMesh(CharacterData->Mesh);
+	GetCharacterMovement()->MaxWalkSpeed = CharacterData->MovementSpeed;
+}
+
+void ATTCharacter::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
 }
 
 // Called every frame
@@ -30,3 +42,42 @@ void ATTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void ATTCharacter::ApplyDamage_Implementation_Implementation(float Damage, EDamageType DamageType)
+{
+	if (CharacterData)
+	{
+		if (CharacterData->DamageResistances.Find(DamageType) != nullptr)
+		{
+			Health = Health - Damage * *CharacterData->DamageResistances.Find(DamageType);
+		}
+		else
+		{
+			Health -= Damage;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ATTCharacter : CharacterData is null"));
+		Health = Health - Damage;
+	}
+	if (Health <= 0)
+	{
+		Health = 0;
+		Death();
+	}
+}
+	
+
+void ATTCharacter::Death_Implementation()
+{
+	GetMesh()->SetSimulatePhysics(true);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Ignore);
+	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->DecreaseEnemyCounter();
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &ATTCharacter::CharacterDestroy,5,false);
+}
+
+void ATTCharacter::CharacterDestroy()
+{
+	this->Destroy();
+}
