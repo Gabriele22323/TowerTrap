@@ -11,6 +11,7 @@
  * 
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNoParamDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FoneParamDelegate,float,NewValue);
 
 USTRUCT(BlueprintType, Blueprintable)
 struct FEnemyWave
@@ -56,10 +57,7 @@ public:
 	int32 EnemyCounter;
 	UPROPERTY(BlueprintReadWrite)
 	bool bNoMoreEnemyInQueue;
-	UPROPERTY(BlueprintAssignable,BlueprintCallable)
-	FNoParamDelegate OnWaveDefeated;
-	UPROPERTY(BlueprintAssignable,BlueprintCallable)
-	FNoParamDelegate OnWaveStarted;
+	
 	
 	//EndPoints functions
 	UFUNCTION(BlueprintGetter)
@@ -88,6 +86,10 @@ public:
 	void DecreaseEnemyCounter();
 	
 	//Wave functions
+	UPROPERTY(BlueprintAssignable,BlueprintCallable)
+	FNoParamDelegate OnWaveDefeated;
+	UPROPERTY(BlueprintAssignable,BlueprintCallable)
+	FNoParamDelegate OnWaveStarted;
 	UFUNCTION(BlueprintCallable)
 	void StartNextWave(); //re-enables all spawner and increases currentWave counter
 	UFUNCTION(BlueprintCallable)
@@ -101,7 +103,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetNextWaveRemainingTime() const;
 	UFUNCTION(BlueprintCallable)
-	void PauseTimer();
+	void PauseTimer() const;
 	UFUNCTION(BlueprintCallable)
-	void ResumeTimer();
+	void ResumeTimer() const;
+	
+	//Player Health
+	UPROPERTY(BlueprintReadWrite)
+	float StartingHealth;
+	UPROPERTY(BlueprintReadWrite)
+	float Health;
+	UPROPERTY(BlueprintAssignable)
+	FoneParamDelegate OnHealthChanged;
+	UPROPERTY(BlueprintAssignable)
+	FNoParamDelegate OnHealthDepleted;
+	UFUNCTION(BlueprintCallable)
+	void SetHealth(float NewHealth,bool Broadcast);
+	
 };

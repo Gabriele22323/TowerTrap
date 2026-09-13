@@ -70,6 +70,7 @@ void ATTCharacter::ApplyDamage_Implementation_Implementation(float Damage, EDama
 
 void ATTCharacter::Death_Implementation()
 {
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetSimulatePhysics(true);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Ignore);
 	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->DecreaseEnemyCounter();

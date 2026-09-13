@@ -124,13 +124,27 @@ float UBattlefieldManager::GetNextWaveRemainingTime() const
 	return GetWorld()->GetTimerManager().GetTimerRemaining(NextWaveTimer);
 }
 
-void UBattlefieldManager::PauseTimer()
+void UBattlefieldManager::PauseTimer() const
 {
 	GetWorld()->GetTimerManager().PauseTimer(NextWaveTimer);
 }
 
-void UBattlefieldManager::ResumeTimer()
+void UBattlefieldManager::ResumeTimer() const
 {
 	GetWorld()->GetTimerManager().UnPauseTimer(NextWaveTimer);
 }
+
+void UBattlefieldManager::SetHealth(const float NewHealth, const bool Broadcast)
+{
+	Health = NewHealth;
+	if (Broadcast)
+	{
+		OnHealthChanged.Broadcast(Health);
+	}
+	if (Health <= 0)
+	{
+		OnHealthDepleted.Broadcast();
+	}
+}
+		
 		

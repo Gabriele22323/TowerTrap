@@ -33,4 +33,6 @@ public:
 	float DodgeChance;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	USkeletalMesh* Mesh;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	float DamageToPlayer;
 };
