@@ -35,4 +35,6 @@ public:
 	USkeletalMesh* Mesh;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	float DamageToPlayer;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	int32 CurrencyGainedOnKill;
 };

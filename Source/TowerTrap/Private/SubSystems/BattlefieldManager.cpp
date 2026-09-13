@@ -146,5 +146,16 @@ void UBattlefieldManager::SetHealth(const float NewHealth, const bool Broadcast)
 		OnHealthDepleted.Broadcast();
 	}
 }
+
+void UBattlefieldManager::SetCurrency(const int32 NewValue)
+{
+	Currency = NewValue;
+	OnCurrencyChanged.Broadcast(Currency);
+}
+
+int32 UBattlefieldManager::GetCurrency() const
+{
+	return Currency;
+}
 		
 		

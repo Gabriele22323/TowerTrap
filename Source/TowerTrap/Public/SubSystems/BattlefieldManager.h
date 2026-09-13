@@ -119,4 +119,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetHealth(float NewHealth,bool Broadcast);
 	
+	//Economy System
+	UPROPERTY(BlueprintSetter = SetCurrency, BlueprintGetter = GetCurrency)
+	int32 Currency;
+	UPROPERTY(BlueprintAssignable)
+	FoneParamDelegate OnCurrencyChanged;
+	UFUNCTION(BlueprintCallable)
+	void SetCurrency(int32 NewValue);
+	UFUNCTION(BlueprintCallable)
+	int32 GetCurrency() const;
+	
 };
