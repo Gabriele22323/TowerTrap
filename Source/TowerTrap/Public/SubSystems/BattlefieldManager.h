@@ -109,7 +109,7 @@ public:
 	
 	//Player Health
 	UPROPERTY(BlueprintReadWrite)
-	float StartingHealth;
+	float StartingHealth = 20;
 	UPROPERTY(BlueprintReadWrite)
 	float Health;
 	UPROPERTY(BlueprintAssignable)
@@ -118,6 +118,8 @@ public:
 	FNoParamDelegate OnHealthDepleted;
 	UFUNCTION(BlueprintCallable)
 	void SetHealth(float NewHealth,bool Broadcast);
+	UFUNCTION(BlueprintCallable)
+	void ApplyDamageToPlayer(float DamageAmount);
 	
 	//Economy System
 	UPROPERTY(BlueprintSetter = SetCurrency, BlueprintGetter = GetCurrency)
@@ -128,5 +130,8 @@ public:
 	void SetCurrency(int32 NewValue);
 	UFUNCTION(BlueprintCallable)
 	int32 GetCurrency() const;
-	
+	UFUNCTION(BlueprintCallable)
+	void AddCurrency(int32 Value);
+	UFUNCTION(BlueprintCallable)
+	bool SubtractCurrency(int32 Value);
 };

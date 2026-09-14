@@ -3,6 +3,8 @@
 
 #include "SubSystems/BattlefieldManager.h"
 
+#include "EntitySystem/MovieSceneEntitySystemRunner.h"
+
 const TArray<FVector>& UBattlefieldManager::GetEndPoints() const
 {
 	return EndPoints;
@@ -40,7 +42,7 @@ void UBattlefieldManager::InitializeBattlefield()
 	bNoMoreEnemyInQueue = false;
 	checkf(!Waves[0].Wave.IsEmpty(),TEXT("BattlefieldManager | InitializeBattlefield() : Wave is empty!"));
 	Waves[CurrentWave].Wave.GenerateKeyArray(ReferenceMap);
-	
+	Health = StartingHealth;
 	UE_LOG(LogTemp,Error,TEXT("Waves class number : %d"), Waves[CurrentWave].Wave.GetMaxIndex());
 }
 
@@ -147,6 +149,19 @@ void UBattlefieldManager::SetHealth(const float NewHealth, const bool Broadcast)
 	}
 }
 
+void UBattlefieldManager::ApplyDamageToPlayer(const float DamageAmount)
+{
+	if (Health > 0)
+	{
+		Health -= DamageAmount;
+		Health = FMath::Clamp<float>(Health,0,StartingHealth);
+		OnHealthChanged.Broadcast(Health);
+		if (Health <= 0)
+			OnHealthDepleted.Broadcast();
+	}
+}
+		
+
 void UBattlefieldManager::SetCurrency(const int32 NewValue)
 {
 	Currency = NewValue;
@@ -157,5 +172,21 @@ int32 UBattlefieldManager::GetCurrency() const
 {
 	return Currency;
 }
+
+void UBattlefieldManager::AddCurrency(const int32 Value)
+{
+	Currency += Value;
+}
+
+bool UBattlefieldManager::SubtractCurrency(int32 Value)
+{
+	if (Currency - Value >= 0)
+	{
+		Currency -= Value;
+		return true;
+	}
+	return false;
+}
+		
 		
 		

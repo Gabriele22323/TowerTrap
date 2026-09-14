@@ -74,6 +74,7 @@ void ATTCharacter::Death_Implementation()
 	GetMesh()->SetSimulatePhysics(true);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Ignore);
 	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->DecreaseEnemyCounter();
+	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->AddCurrency(CharacterData->CurrencyGainedOnKill);
 	FTimerHandle UnusedHandle;
 	GetWorldTimerManager().SetTimer(UnusedHandle, this, &ATTCharacter::CharacterDestroy,5,false);
 }
