@@ -120,18 +120,4 @@ public:
 	void SetHealth(float NewHealth,bool Broadcast);
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageToPlayer(float DamageAmount);
-	
-	//Economy System
-	UPROPERTY(BlueprintSetter = SetCurrency, BlueprintGetter = GetCurrency)
-	int32 Currency;
-	UPROPERTY(BlueprintAssignable)
-	FoneParamDelegate OnCurrencyChanged;
-	UFUNCTION(BlueprintCallable)
-	void SetCurrency(int32 NewValue);
-	UFUNCTION(BlueprintCallable)
-	int32 GetCurrency() const;
-	UFUNCTION(BlueprintCallable)
-	void AddCurrency(int32 Value);
-	UFUNCTION(BlueprintCallable)
-	bool SubtractCurrency(int32 Value);
 };

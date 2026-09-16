@@ -161,32 +161,5 @@ void UBattlefieldManager::ApplyDamageToPlayer(const float DamageAmount)
 	}
 }
 		
-
-void UBattlefieldManager::SetCurrency(const int32 NewValue)
-{
-	Currency = NewValue;
-	OnCurrencyChanged.Broadcast(Currency);
-}
-
-int32 UBattlefieldManager::GetCurrency() const
-{
-	return Currency;
-}
-
-void UBattlefieldManager::AddCurrency(const int32 Value)
-{
-	Currency += Value;
-}
-
-bool UBattlefieldManager::SubtractCurrency(int32 Value)
-{
-	if (Currency - Value >= 0)
-	{
-		Currency -= Value;
-		return true;
-	}
-	return false;
-}
-		
 		
 		
