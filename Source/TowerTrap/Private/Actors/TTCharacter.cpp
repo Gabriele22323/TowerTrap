@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Splines/SplineMath.h"
 #include "SubSystems/BattlefieldManager.h"
+#include "SubSystems/EconomySubsystem.h"
 
 
 // Sets default values
@@ -74,7 +75,7 @@ void ATTCharacter::Death_Implementation()
 	GetMesh()->SetSimulatePhysics(true);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Ignore);
 	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->DecreaseEnemyCounter();
-	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->AddCurrency(CharacterData->CurrencyGainedOnKill);
+	GetGameInstance()->GetSubsystem<UEconomySubsystem>()->AddCurrency(CharacterData->CurrencyGainedOnKill);
 	FTimerHandle UnusedHandle;
 	GetWorldTimerManager().SetTimer(UnusedHandle, this, &ATTCharacter::CharacterDestroy,5,false);
 }
