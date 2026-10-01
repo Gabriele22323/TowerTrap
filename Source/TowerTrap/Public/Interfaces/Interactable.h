@@ -26,4 +26,8 @@ public:
 	void Interact();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void CheckInteract(); //used to display widgets prior to interaction
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Hovered();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UnHovered();
 };
