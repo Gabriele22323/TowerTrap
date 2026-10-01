@@ -34,10 +34,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Pawn")
 	TObjectPtr<ATDPlayerPawn> ControlledPawn;
 	
+	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
+	TObjectPtr<AActor> HoveredActor;
+	
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
+	virtual void Tick(float DeltaTime) override;
 	
 private:
 

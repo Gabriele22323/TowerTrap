@@ -72,10 +72,10 @@ void ATDPlayerPawn::BeginPlay()
 	SetActorLocation(Location);
 	//gets the actor responsible for the bounds
 	CameraBoundsManager = Cast<APlayerCameraBoundsManager>(UGameplayStatics::GetActorOfClass(GetWorld(),APlayerCameraBoundsManager::StaticClass()));
+	checkf(CameraBoundsManager,TEXT("Error : Missing camera bounds manager"));
 	CalculateCameraBounds();
 }
 
-// Called every frame
 void ATDPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

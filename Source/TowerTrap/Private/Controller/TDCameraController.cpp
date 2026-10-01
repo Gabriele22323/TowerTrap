@@ -3,9 +3,10 @@
 
 #include "Controller/TDCameraController.h"
 
-#include "AITypes.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "ToolContextInterfaces.h"
+#include "Interfaces/Interactable.h"
 
 void ATDCameraController::BeginPlay()
 {
@@ -40,6 +41,29 @@ void ATDCameraController::OnUnPossess()
 	ControlledPawn = nullptr;
 }
 
+void ATDCameraController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	FHitResult HitResult;
+	if (!GetHitResultUnderCursor(ECC_Visibility,false,HitResult))
+	{
+		return;
+	}
+	if (HitResult.GetActor() != HoveredActor) //hit actor is different from previous one
+	{
+		if (HoveredActor != nullptr && HoveredActor->Implements<UInteractable>()) 
+		{
+			IInteractable::Execute_UnHovered(HoveredActor);
+			HoveredActor = nullptr;
+		}
+		if (HitResult.GetActor()->Implements<UInteractable>())
+		{
+			HoveredActor = HitResult.GetActor();
+			IInteractable::Execute_Hovered(HoveredActor);
+		}
+	}
+}
+
 void ATDCameraController::CameraMove(const struct FInputActionValue& Value)
 {
 	const FVector2D Movement = Value.Get<FVector2D>();
@@ -54,5 +78,14 @@ void ATDCameraController::CameraZoom(const struct FInputActionValue& Value)
 
 void ATDCameraController::CameraInteract(const struct FInputActionValue& Value)
 {
-	//TODO fuck myselfw
+	FHitResult HitResult;
+	if (!GetHitResultUnderCursor(ECC_Visibility,false,HitResult))
+	{
+		return;
+	}
+	AActor* HitActor = HitResult.GetActor();
+	if (HitActor->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
+	{
+		IInteractable::Execute_Interact(HitActor);
+	}
 }
