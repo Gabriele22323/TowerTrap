@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
+#include "InputActionValue.h"
 #include "PlayerCameraBoundsManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
@@ -17,22 +19,33 @@ public:
 	// Sets default values for this pawn's properties
 	ATDPlayerPawn();
 	
-	void MoveCamera(const FVector2D& Movement);
-	void ZoomCamera(float Value);
+	void MoveCamera(const FInputActionValue& Value);
+	void ZoomCamera(const FInputActionValue& Value);
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+public:
 	
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	
+	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Interaction")
+	TObjectPtr<AActor> HoveredActor;
+	UPROPERTY(BlueprintReadOnly,Category = "Interaction")
+	TObjectPtr<APlayerController> CurrentController;
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> CameraMoveAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> CameraZoomAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> PrimaryAction;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<USceneComponent> Root;
 
@@ -69,4 +82,5 @@ private:
 	
 	bool GetCameraGroundPoint(const FVector2D& ScreenCorner,FVector& OutGroundPoint) const;
 	void CalculateCameraBounds();
+	void PrimaryPlayerAction(const FInputActionValue& Value);
 };

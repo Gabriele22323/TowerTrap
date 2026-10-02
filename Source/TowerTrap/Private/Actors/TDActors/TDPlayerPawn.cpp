@@ -3,10 +3,12 @@
 
 #include "Actors/TDActors/TDPlayerPawn.h"
 
+#include "EnhancedInputComponent.h"
+#include "ToolContextInterfaces.h"
 #include "Actors/TDActors/PlayerCameraBoundsManager.h"
 #include "Camera/CameraComponent.h"
+#include "Interfaces/Interactable.h"
 #include "Kismet/GameplayStatics.h"
-#include "Materials/MaterialExpressionOperator.h"
 
 
 // Sets default values
@@ -25,8 +27,9 @@ ATDPlayerPawn::ATDPlayerPawn()
 	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 }
 
-void ATDPlayerPawn::MoveCamera(const FVector2D& Movement)
+void ATDPlayerPawn::MoveCamera(const FInputActionValue& Value)
 {
+	const FVector Movement = Value.Get<FVector>();
 	if (Movement.IsNearlyZero())
 	{
 		return;
@@ -48,13 +51,14 @@ void ATDPlayerPawn::MoveCamera(const FVector2D& Movement)
 
 }
 
-void ATDPlayerPawn::ZoomCamera(float Value)
+void ATDPlayerPawn::ZoomCamera(const FInputActionValue& Value)
 {
-	if (FMath::IsNearlyZero(Value))
+	const float ZoomAmount= Value.Get<float>();
+	if (FMath::IsNearlyZero(ZoomAmount))
 	{
 		return;
 	}
-	const float NewFov = PawnCamera->FieldOfView - (Value * ZoomSpeed);
+	const float NewFov = PawnCamera->FieldOfView - (ZoomAmount * ZoomSpeed);
 	PawnCamera->SetFieldOfView(FMath::Clamp(NewFov,MinFOV,MaxFOV));
 	CalculateCameraBounds();
 	FVector Location = GetActorLocation();
@@ -67,6 +71,7 @@ void ATDPlayerPawn::ZoomCamera(float Value)
 void ATDPlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	CurrentController = GetLocalViewingPlayerController();
 	FVector Location = GetActorLocation();
 	Location.Z = CameraHeight;
 	SetActorLocation(Location);
@@ -74,17 +79,42 @@ void ATDPlayerPawn::BeginPlay()
 	CameraBoundsManager = Cast<APlayerCameraBoundsManager>(UGameplayStatics::GetActorOfClass(GetWorld(),APlayerCameraBoundsManager::StaticClass()));
 	checkf(CameraBoundsManager,TEXT("Error : Missing camera bounds manager"));
 	CalculateCameraBounds();
+	UE_LOG(LogTemp,Log,TEXT("TDPlayerPawn initialized!"));
 }
 
 void ATDPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	FHitResult HitResult;
+	if (!CurrentController->GetHitResultUnderCursor(ECC_Visibility,false,HitResult))
+	{
+		return;
+	}
+	if (HitResult.GetActor() != HoveredActor) //hit actor is different from previous one
+	{
+		if (HoveredActor != nullptr && HoveredActor->Implements<UInteractable>()) 
+		{
+			IInteractable::Execute_UnHovered(HoveredActor);
+			HoveredActor = nullptr;
+		}
+		if (HitResult.GetActor()->Implements<UInteractable>())
+		{
+			HoveredActor = HitResult.GetActor();
+			IInteractable::Execute_Hovered(HoveredActor);
+		}
+	}
 }
 
 // Called to bind functionality to input
 void ATDPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInput->BindAction(CameraMoveAction,ETriggerEvent::Triggered,this,&ATDPlayerPawn::MoveCamera);
+		EnhancedInput->BindAction(CameraZoomAction,ETriggerEvent::Triggered,this,&ATDPlayerPawn::ZoomCamera);
+		EnhancedInput->BindAction(PrimaryAction,ETriggerEvent::Started,this,&ATDPlayerPawn::PrimaryPlayerAction);
+	}
 }
 
 bool ATDPlayerPawn::GetCameraGroundPoint(const FVector2D& ScreenCorner,FVector& OutGroundPoint) const
@@ -156,5 +186,17 @@ void ATDPlayerPawn::CalculateCameraBounds()
 		ValidPawnMax.X =CameraBoundsManager->GetBounds().Max.X - MaxOffset.X;
 		ValidPawnMin.Y =CameraBoundsManager->GetBounds().Min.Y - MinOffset.Y;
 		ValidPawnMax.Y =CameraBoundsManager->GetBounds().Max.Y - MaxOffset.Y;
+	}
+}
+
+void ATDPlayerPawn::PrimaryPlayerAction(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp,Log,TEXT("PrimaryAction fired"));
+	if (HoveredActor!=nullptr)
+	{
+		if (HoveredActor->Implements<UInteractable>())
+		{
+			IInteractable::Execute_Interact(HoveredActor);
+		}
 	}
 }
