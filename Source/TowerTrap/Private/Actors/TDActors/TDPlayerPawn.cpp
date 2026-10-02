@@ -15,7 +15,7 @@
 ATDPlayerPawn::ATDPlayerPawn()
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(Root);
@@ -78,7 +78,6 @@ void ATDPlayerPawn::BeginPlay()
 	//gets the actor responsible for the bounds
 	CameraBoundsManager = Cast<APlayerCameraBoundsManager>(UGameplayStatics::GetActorOfClass(GetWorld(),APlayerCameraBoundsManager::StaticClass()));
 	checkf(CameraBoundsManager,TEXT("Error : Missing camera bounds manager"));
-	CalculateCameraBounds();
 	UE_LOG(LogTemp,Log,TEXT("TDPlayerPawn initialized!"));
 }
 
@@ -86,23 +85,36 @@ void ATDPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	FHitResult HitResult;
-	if (!CurrentController->GetHitResultUnderCursor(ECC_Visibility,false,HitResult))
+	if (CurrentController) //check if controller is valid
 	{
-		return;
+		if (!CurrentController->GetHitResultUnderCursor(ECC_Visibility,false,HitResult))
+		{
+			return;
+		}
+		if (HitResult.GetActor() != HoveredActor) //hit actor is different from previous one
+		{
+			if (HoveredActor != nullptr && HoveredActor->Implements<UInteractable>()) 
+			{
+				IInteractable::Execute_UnHovered(HoveredActor);
+				HoveredActor = nullptr;
+			}
+			if (HitResult.GetActor()->Implements<UInteractable>())
+			{
+				HoveredActor = HitResult.GetActor();
+				IInteractable::Execute_Hovered(HoveredActor);
+			}
+		}	
 	}
-	if (HitResult.GetActor() != HoveredActor) //hit actor is different from previous one
+	else
 	{
-		if (HoveredActor != nullptr && HoveredActor->Implements<UInteractable>()) 
-		{
-			IInteractable::Execute_UnHovered(HoveredActor);
-			HoveredActor = nullptr;
-		}
-		if (HitResult.GetActor()->Implements<UInteractable>())
-		{
-			HoveredActor = HitResult.GetActor();
-			IInteractable::Execute_Hovered(HoveredActor);
-		}
+		CurrentController = GetLocalViewingPlayerController();
 	}
+}
+
+void ATDPlayerPawn::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	CalculateCameraBounds();
 }
 
 // Called to bind functionality to input

@@ -33,10 +33,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
+	virtual void PossessedBy(AController* NewController) override;
+	
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Interaction")
 	TObjectPtr<AActor> HoveredActor;
 	UPROPERTY(BlueprintReadOnly,Category = "Interaction")
 	TObjectPtr<APlayerController> CurrentController;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UCameraComponent> PawnCamera;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Camera|Bounds")
+	FVector2D ValidPawnMin;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Camera|Bounds")
+	FVector2D ValidPawnMax;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Camera|Bounds")
+	APlayerCameraBoundsManager* CameraBoundsManager;
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> CameraMoveAction;
@@ -48,9 +58,6 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<USceneComponent> Root;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	TObjectPtr<UCameraComponent> PawnCamera;
 	
 	UPROPERTY(EditAnywhere, Category = "Camera|Movement")
 	float CameraHeight = 5000.0f;
@@ -68,14 +75,6 @@ private:
 	float ZoomSpeed = 5.0f;
 	
 	//bound calculation 
-	UPROPERTY(EditAnywhere, Category = "Camera|Bounds")
-	APlayerCameraBoundsManager* CameraBoundsManager;
-	
-	UPROPERTY(EditAnywhere, Category = "Camera|Bounds")
-	FVector2D ValidPawnMin;
-	
-	UPROPERTY(EditAnywhere, Category = "Camera|Bounds")
-	FVector2D ValidPawnMax;
 
 	UPROPERTY(EditAnywhere, Category = "Camera|Bounds")
 	float BattlefieldZ = 0.0f;
