@@ -7,3 +7,13 @@ bool ABasePuzzle::CheckIfIsSolved_Implementation()
 {
 	return bIsSolved;
 }
+
+void ABasePuzzle::BeginPlay()
+{
+	Super::BeginPlay();
+	if (PuzzleData)
+	{
+		State = PuzzleData->State;
+		CurrentInput = PuzzleData->InitialInput;
+	}
+}

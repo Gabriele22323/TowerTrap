@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Actors/BaseInteractable.h"
+#include "Enums/ESolveState.h"
+#include "Data/PuzzleDataAsset.h"
 #include "BasePuzzle.generated.h"
 
 /**
@@ -14,9 +16,18 @@ class TOWERTRAP_API ABasePuzzle : public ABaseInteractable
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY()
-	bool bIsSolved;
+
 public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPuzzleDataAsset* PuzzleData;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ESolveState State;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString CurrentInput; //the solution that has been inputted last
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsSolved;
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool CheckIfIsSolved();
+	virtual void BeginPlay() override;
 };
