@@ -3,10 +3,6 @@
 
 #include "Actors/BasePuzzle.h"
 
-bool ABasePuzzle::CheckIfIsSolved_Implementation()
-{
-	return bIsSolved;
-}
 
 void ABasePuzzle::BeginPlay()
 {
@@ -17,3 +13,23 @@ void ABasePuzzle::BeginPlay()
 		CurrentInput = PuzzleData->InitialInput;
 	}
 }
+void ABasePuzzle::SetState(ESolveState NewState)
+{
+	State = NewState;
+}
+
+void ABasePuzzle::ShowWidget_Implementation()
+{
+}
+
+bool ABasePuzzle::CheckIfSolved()
+{
+	if (CurrentInput == PuzzleData->Solution)
+	{
+		SetState(ESolveState::Done);
+		return true;
+	}
+	return false;
+}
+
+//void ABasePuzzle::Execute_Interact()

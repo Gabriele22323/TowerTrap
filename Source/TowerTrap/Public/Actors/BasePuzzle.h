@@ -24,10 +24,11 @@ public:
 	ESolveState State;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString CurrentInput; //the solution that has been inputted last
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsSolved;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool CheckIfIsSolved();
+	void ShowWidget();
+	UFUNCTION(BlueprintCallable, BlueprintCallable)
+	bool CheckIfSolved();
 	virtual void BeginPlay() override;
+	void SetState(ESolveState NewState);
 };
