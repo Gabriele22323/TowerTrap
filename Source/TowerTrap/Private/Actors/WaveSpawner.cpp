@@ -29,28 +29,20 @@ void AWaveSpawner::Tick(float DeltaTime)
 		SpawnNextUnit();
 	}
 }
-		
-
-void AWaveSpawner::SpawnPawn(TSubclassOf<ATTCharacter> Character)
-{
-	const FVector* Location = new FVector(GetActorLocation());
-	const FRotator* Rotation = new FRotator(GetActorRotation());
-	const FActorSpawnParameters& SpawnParams = FActorSpawnParameters();
-	LastSpawnedPawn = GetWorld()->SpawnActor(Character,Location,Rotation,SpawnParams);
-	this->SetActorTickEnabled(true);
-}
 
 bool AWaveSpawner::SpawnNextUnit()
 {
 	UE_LOG(LogTemp,Log,TEXT("Spawning next unit..."));
-	UCharacterDataAsset* CharacterData =  GetGameInstance()->GetSubsystem<UBattlefieldManager>()->GetNextUnit();
+	TObjectPtr<UGroundUnitDefinition> CharacterData =  GetGameInstance()->GetSubsystem<UBattlefieldManager>()->GetNextGroundUnit();
 	if (CharacterData != nullptr)
 	{
 		const FTransform Transform = GetActorTransform();
-		LastSpawnedPawn = GetWorld()->SpawnActorDeferred<ATTCharacter>(PawnClass,Transform,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn); //spawn without initialization
-		ATTCharacter* Ch = Cast<ATTCharacter>(LastSpawnedPawn);
-		Ch->CharacterData = CharacterData; //set data
+		AActor* Actor = GetWorld()->SpawnActorDeferred<ACombatUnit>(PawnClass,Transform,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn); //spawn without initialization
+		LastSpawnedPawn = Cast<ACombatUnit>(Actor);
+		LastSpawnedPawn->Tags.Add("Enemy");
+		LastSpawnedPawn->CombatUnitData = CharacterData->UnitData;
 		LastSpawnedPawn->FinishSpawning(Transform); //initialize actor
+		LastSpawnedPawn->CombatComponent->AssignDataAndInitialize(CharacterData->CombatData);
 		GetGameInstance()->GetSubsystem<UBattlefieldManager>()->EnemyCounter++;
 		return true;
 	}

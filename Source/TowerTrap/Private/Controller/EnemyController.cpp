@@ -30,7 +30,7 @@ void AEnemyController::Tick(float DeltaTime)
 void AEnemyController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	PossessedCharacter = Cast<ATTCharacter>(InPawn);
+	PossessedCharacter = Cast<ACombatUnit>(InPawn);
 	if (!PossessedCharacter)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("EnemyController : cast failed"));

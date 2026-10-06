@@ -46,7 +46,7 @@ void UBattlefieldManager::InitializeBattlefield()
 	UE_LOG(LogTemp,Error,TEXT("Waves class number : %d"), Waves[CurrentWave].Wave.GetMaxIndex());
 }
 
-UCharacterDataAsset* UBattlefieldManager::GetNextUnit()
+UGroundUnitDefinition* UBattlefieldManager::GetNextGroundUnit()
 {
 	if (!Waves[CurrentWave].Wave.IsEmpty())
 	{
@@ -98,6 +98,7 @@ void UBattlefieldManager::StartNextWave()
 	{
 		Spawner->SetActorTickEnabled(true);
 	}
+	GetWorld()->GetTimerManager().ClearTimer(NextWaveTimer);
 }
 
 void UBattlefieldManager::EnterPrepPhase()

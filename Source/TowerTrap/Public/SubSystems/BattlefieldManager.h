@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Actors/WaveSpawner.h"
+#include "Data/TD_DataAssets/GroundUnitDefinition.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "BattlefieldManager.generated.h"
 
@@ -18,13 +19,13 @@ struct FEnemyWave
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TMap<UCharacterDataAsset*,int32> Wave;
+	TMap<TObjectPtr<UGroundUnitDefinition>,int32> Wave;
 	
 	FEnemyWave()
 	{
 	}
 	
-	FEnemyWave(const TMap<UCharacterDataAsset*, int32>& NewWave)
+	FEnemyWave(const TMap<TObjectPtr<UGroundUnitDefinition>, int32>& NewWave)
 	{
 		Wave = NewWave;
 	}
@@ -41,9 +42,9 @@ private:
 	UPROPERTY(BlueprintGetter = GetSpawners)
 	TArray<AWaveSpawner*> Spawners;
 	UPROPERTY()
-	TArray<UCharacterDataAsset*> ReferenceMap; //used to map index to enemy type
-	UPROPERTY()
 	FTimerHandle NextWaveTimer;
+	UPROPERTY()
+	TArray<TObjectPtr<UGroundUnitDefinition>> ReferenceMap;
 public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FEnemyWave> Waves;
@@ -57,6 +58,8 @@ public:
 	int32 EnemyCounter;
 	UPROPERTY(BlueprintReadWrite)
 	bool bNoMoreEnemyInQueue;
+	UPROPERTY(BlueprintReadWrite)
+	float NextWaveTime; //time amount before a new wave starts
 	
 	
 	//EndPoints functions
@@ -79,7 +82,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeBattlefield(); //sets value for first wave
 	UFUNCTION(BlueprintCallable)
-	UCharacterDataAsset* GetNextUnit(); //return a pointer to a character data assets and handles type changes and counting
+	UGroundUnitDefinition* GetNextGroundUnit();
 	
 	//Enemy Handling
 	UFUNCTION(BlueprintCallable)

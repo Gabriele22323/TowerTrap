@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "Actors/TTCharacter.h"
+#include "Actors/TDActors/CombatUnit.h"
 #include "EnemyController.generated.h"
 
 UCLASS()
@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	AEnemyController();
 	UPROPERTY(BlueprintReadOnly)
-	ATTCharacter* PossessedCharacter = nullptr;
+	TObjectPtr<ACombatUnit> PossessedCharacter = nullptr;
 	UPROPERTY(BlueprintReadWrite)
 	FVector Destination;
 
