@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CombatUnit.h"
 #include "Components/SphereComponent.h"
+#include "Data/TD_DataAssets/TurretData.h"
 #include "GameFramework/Pawn.h"
 #include "CombatTower.generated.h"
 
@@ -33,7 +34,7 @@ public:
 	UPROPERTY(BlueprintReadOnly,EditAnywhere)
 	TObjectPtr<USphereComponent> DetectionRange;
 	UPROPERTY(BlueprintReadWrite,EditAnywhere, meta=(ExposeOnSpawn))
-	TObjectPtr<UGroundUnitData> GroundUnitData;
+	TObjectPtr<UTurretData> TowerData;
 	
 	//Handling range upgrade
 	void OnAttackRangeChanged(const FOnAttributeChangeData& Data);
@@ -47,4 +48,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	bool ApplyUpgrade();
+	
+	UFUNCTION()
+	void BindDelegates();
 };

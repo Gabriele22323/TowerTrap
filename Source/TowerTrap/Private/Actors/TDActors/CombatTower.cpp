@@ -14,14 +14,14 @@ ACombatTower::ACombatTower()
 	PrimaryActorTick.bCanEverTick = true;
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
 	DetectionRange = CreateDefaultSubobject<USphereComponent>("DetectionRange");
+	CombatComponent->FOnInitialize.AddDynamic(this, &ACombatTower::BindDelegates);
 }
 
 // Called when the game starts or when spawned
 void ACombatTower::BeginPlay()
 {
 	Super::BeginPlay();
-	CombatComponent->AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCombatAttributeSet::GetAttackRangeAttribute()).AddUObject(this,&ACombatTower::OnAttackRangeChanged);
-	DetectionRange->SetSphereRadius(CombatComponent->AbilitySystemComponent->GetNumericAttribute(UCombatAttributeSet::GetAttackRangeAttribute()));
+	
 }
 
 // Called every frame
@@ -51,23 +51,25 @@ void ACombatTower::OnAttackRangeChanged(const FOnAttributeChangeData& Data)
 
 bool ACombatTower::ApplyUpgrade()
 {
-	if (CombatComponent)
+	if (TowerData)
 	{
-		if (CombatComponent->CombatUnitData)
+		if (UpgradeLevel < TowerData->Upgrade.UpgradeAmountLimit)
 		{
-			// if (UpgradeLevel < CombatComponent->CombatUnitData->Upgrade.UpgradeAmountLimit)
-			// {
-			// 	FGameplayEffectContextHandle Context = CombatComponent->AbilitySystemComponent->MakeEffectContext();
-			// 	Context.AddSourceObject(GetOwner());
-			// 	FGameplayEffectSpecHandle SpecHandle = CombatComponent->AbilitySystemComponent->MakeOutgoingSpec(CombatComponent->CombatUnitData->Upgrade.UpgradeEffect,1.0f,Context);
-			// 	if (SpecHandle.IsValid())
-			// 	{
-			// 		CombatComponent->AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-			// 		return true;
-			// 	}
-			// }
+			FGameplayEffectContextHandle ContextHandle = CombatComponent->AbilitySystemComponent->MakeEffectContext();
+			ContextHandle.AddSourceObject(this);
+			FGameplayEffectSpecHandle SpecHandle = CombatComponent->AbilitySystemComponent->MakeOutgoingSpec(TowerData->Upgrade.UpgradeEffect,1.0f, ContextHandle);
+			if (SpecHandle.IsValid())
+			{
+				CombatComponent->AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+			}
 		}
 	}
 	return false;
+}
+
+void ACombatTower::BindDelegates()
+{
+	CombatComponent->AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCombatAttributeSet::GetAttackRangeAttribute()).AddUObject(this,&ACombatTower::OnAttackRangeChanged);
+	DetectionRange->SetSphereRadius(CombatComponent->AbilitySystemComponent->GetNumericAttribute(UCombatAttributeSet::GetAttackRangeAttribute()));
 }
 
