@@ -16,7 +16,6 @@ class TOWERTRAP_API UDamageExecutionCalculation : public UGameplayEffectExecutio
 public:
 
 	UDamageExecutionCalculation();
-protected:
 	static FGameplayEffectAttributeCaptureDefinition BaseDamageDef;
 	static FGameplayEffectAttributeCaptureDefinition PhysicalDamageDef;
 	static FGameplayEffectAttributeCaptureDefinition MagicalDamageDef;

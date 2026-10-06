@@ -6,6 +6,21 @@
 #include "Data/AttributeSets/CharacterAttributes.h"
 #include "Data/AttributeSets/CombatAttributeSet.h"
 
+FGameplayEffectAttributeCaptureDefinition
+UDamageExecutionCalculation::BaseDamageDef;
+
+FGameplayEffectAttributeCaptureDefinition
+UDamageExecutionCalculation::PhysicalDamageDef;
+
+FGameplayEffectAttributeCaptureDefinition
+UDamageExecutionCalculation::MagicalDamageDef;
+
+FGameplayEffectAttributeCaptureDefinition
+UDamageExecutionCalculation::PhysicalDefenseDef;
+
+FGameplayEffectAttributeCaptureDefinition
+UDamageExecutionCalculation::MagicalDefenseDef;
+
 UDamageExecutionCalculation::UDamageExecutionCalculation()
 {
 	BaseDamageDef = FGameplayEffectAttributeCaptureDefinition(UCombatAttributeSet::GetBaseDamageAttribute(),EGameplayEffectAttributeCaptureSource::Source,false);
