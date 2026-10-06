@@ -49,9 +49,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool ApplyUpgrade();
 	UFUNCTION(BlueprintCallable)
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult)
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult);
 	UFUNCTION(BlueprintCallable)
-	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult)
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult);
 	
 	UFUNCTION()
 	void BindDelegates();
