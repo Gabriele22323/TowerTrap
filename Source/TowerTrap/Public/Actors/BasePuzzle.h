@@ -27,8 +27,10 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ShowWidget();
-	UFUNCTION(BlueprintCallable, BlueprintCallable)
+	UFUNCTION(BlueprintCallable)
 	bool CheckIfSolved();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SendInfoToGI();
 	virtual void BeginPlay() override;
 	void SetState(ESolveState NewState);
 };

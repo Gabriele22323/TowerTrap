@@ -27,9 +27,14 @@ bool ABasePuzzle::CheckIfSolved()
 	if (CurrentInput == PuzzleData->Solution)
 	{
 		SetState(ESolveState::Done);
+		SendInfoToGI();
 		return true;
 	}
 	return false;
+}
+
+void ABasePuzzle::SendInfoToGI_Implementation()
+{
 }
 
 //void ABasePuzzle::Execute_Interact()
