@@ -40,14 +40,18 @@ public:
 	void OnAttackRangeChanged(const FOnAttributeChangeData& Data);
 	
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	TArray<TObjectPtr<ACombatUnit>> Targets;
+	TArray<TObjectPtr<AActor>> Targets;
 	UPROPERTY()
-	TObjectPtr<ACombatUnit> CurrentTarget;
+	TObjectPtr<AActor> CurrentTarget;
 	UPROPERTY(BlueprintReadOnly,EditAnywhere)
 	int32 UpgradeLevel = 0;
 	
 	UFUNCTION(BlueprintCallable)
 	bool ApplyUpgrade();
+	UFUNCTION(BlueprintCallable)
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult)
+	UFUNCTION(BlueprintCallable)
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult)
 	
 	UFUNCTION()
 	void BindDelegates();

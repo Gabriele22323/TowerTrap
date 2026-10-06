@@ -14,6 +14,7 @@ ACombatTower::ACombatTower()
 	PrimaryActorTick.bCanEverTick = true;
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
 	DetectionRange = CreateDefaultSubobject<USphereComponent>("DetectionRange");
+	DetectionRange->OnComponentBeginOverlap.AddDynamic(this,&ACombatTower::OnOverlapBegin);
 	CombatComponent->FOnInitialize.AddDynamic(this, &ACombatTower::BindDelegates);
 }
 
@@ -65,6 +66,22 @@ bool ACombatTower::ApplyUpgrade()
 		}
 	}
 	return false;
+}
+
+void ACombatTower::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult)
+{
+	if (OverlappedActor->ActorHasTag("Enemy"))
+	{
+		Targets.Add(OverlappedActor);
+	}
+}
+
+void ACombatTower::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OverlappedActor,UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult)
+{
+	if (OverlappedActor->ActorHasTag("Enemy"))
+	{
+		Targets.Remove(OverlappedActor);
+	}
 }
 
 void ACombatTower::BindDelegates()
