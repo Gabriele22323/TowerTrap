@@ -17,6 +17,9 @@ class TOWERTRAP_API UCombatAttributeSet : public UAttributeSet
 	
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FGameplayAttributeData BaseDamage;
+	ATTRIBUTE_ACCESSORS_BASIC(UCombatAttributeSet,BaseDamage);
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FGameplayAttributeData PhysicalDamage;
 	ATTRIBUTE_ACCESSORS_BASIC(UCombatAttributeSet,PhysicalDamage);
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
