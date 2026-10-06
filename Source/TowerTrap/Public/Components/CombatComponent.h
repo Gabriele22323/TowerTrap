@@ -46,6 +46,7 @@ public:
 	void InitializeStartupEffects();
 	void InitializeAbilities();
 	
+	UPROPERTY(BlueprintReadOnly)
 	bool bCombatInitialized = false;
 	
 	UFUNCTION(BlueprintPure, Category = "Combat")

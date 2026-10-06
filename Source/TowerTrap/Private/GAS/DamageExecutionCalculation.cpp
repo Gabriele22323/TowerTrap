@@ -28,6 +28,11 @@ UDamageExecutionCalculation::UDamageExecutionCalculation()
 	MagicalDamageDef = FGameplayEffectAttributeCaptureDefinition(UCombatAttributeSet::GetMagicDamageAttribute(),EGameplayEffectAttributeCaptureSource::Source,false);
 	PhysicalDefenseDef = FGameplayEffectAttributeCaptureDefinition(UCharacterAttributes::GetPhysicalResistanceAttribute(),EGameplayEffectAttributeCaptureSource::Target,false);
 	MagicalDefenseDef = FGameplayEffectAttributeCaptureDefinition(UCharacterAttributes::GetMagicalResistanceAttribute(),EGameplayEffectAttributeCaptureSource::Target,false);
+	RelevantAttributesToCapture.Add(BaseDamageDef);
+	RelevantAttributesToCapture.Add(PhysicalDamageDef);
+	RelevantAttributesToCapture.Add(MagicalDamageDef);
+	RelevantAttributesToCapture.Add(PhysicalDefenseDef);
+	RelevantAttributesToCapture.Add(MagicalDefenseDef);
 }
 
 void UDamageExecutionCalculation::Execute_Implementation(
