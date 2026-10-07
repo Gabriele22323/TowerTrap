@@ -11,7 +11,9 @@ ATurretSlot::ATurretSlot()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	TowerSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("TowerSpawnPoint"));
+	TowerSpawnPoint->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -37,10 +39,11 @@ void ATurretSlot::SpawnTower(UTurretDefinition* TowerDefinition)
 	}
 	Actor->FinishSpawning(Transform);
 	Actor->InitializeTower(TowerDefinition);	
-	Actor->ForceCheckDetection();
+	//Actor->ForceCheckDetection();
 	OwnedTower = Actor;
 	OwnedTower->SetOwner(this);
 	OwnedTower->SetOwningSlot(this);
+	OwnedTower->AttachToComponent(TowerSpawnPoint,FAttachmentTransformRules::SnapToTargetNotIncludingScale,FName("TowerSpawnPoint"));
 }
 
 void ATurretSlot::DestroyTower()

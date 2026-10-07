@@ -16,9 +16,12 @@ ACombatTower::ACombatTower()
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
 	DetectionRange = CreateDefaultSubobject<USphereComponent>("DetectionRange");
+	DetectionRange->SetupAttachment(RootComponent);
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
+	StaticMesh->SetupAttachment(RootComponent);
 	DetectionRange->OnComponentBeginOverlap.AddDynamic(this,&ACombatTower::OnOverlapBegin);
 	CombatComponent->FOnInitialize.AddDynamic(this, &ACombatTower::BindDelegates);
 }
