@@ -11,6 +11,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Data/AttributeSets/CharacterAttributes.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GeometryCollection/GeometryCollectionSimulationTypes.h"
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_CombatUnit_State_Dead, "CombatUnit.State.Dead");
 
@@ -91,7 +92,7 @@ void ACombatUnit::Death()
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
 	GetCharacterMovement()->DisableMovement();
-	GetCapsuleComponent()->DestroyComponent();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CombatComponent->AbilitySystemComponent->AddLooseGameplayTag(TAG_CombatUnit_State_Dead);
 	FTimerHandle Handle;
 	GetWorldTimerManager().SetTimer(Handle,this,&ACombatUnit::TimedDestroy,3.0f,false);
