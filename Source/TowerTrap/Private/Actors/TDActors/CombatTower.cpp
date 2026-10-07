@@ -4,9 +4,10 @@
 #include "Actors/TDActors/CombatTower.h"
 
 #include "AbilitySystemComponent.h"
+#include "NativeGameplayTags.h"
 #include "Data/AttributeSets/CombatAttributeSet.h"
+#include "Actors/TDActors/TurretSlot.h"
 #include "Engine/OverlapResult.h"
-#include "Misc/MapErrors.h"
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_Turret_Attack, "Tower.Attack.Primary");
 

@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "CombatUnit.h"
-#include "NativeGameplayTags.h"
-#include "TurretSlot.h"
 #include "Components/SphereComponent.h"
 #include "Data/TD_DataAssets/TurretData.h"
 #include "Data/TD_DataAssets/TurretDefinition.h"
 #include "GameFramework/Pawn.h"
+#include "Interfaces/Interactable.h"
 #include "CombatTower.generated.h"
+
+class ATurretSlot;
 
 UCLASS()
 class TOWERTRAP_API ACombatTower : public APawn, public IAbilitySystemInterface, public IInteractable
