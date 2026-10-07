@@ -26,10 +26,6 @@ ACombatTower::ACombatTower()
 void ACombatTower::BeginPlay()
 {
 	Super::BeginPlay();
-	if (TowerData)
-	{
-		StaticMesh->SetStaticMesh(TowerData->Mesh);
-	}
 }
 
 // Called every frame
@@ -55,7 +51,12 @@ void ACombatTower::Tick(float DeltaTime)
 				CurrentTarget = nullptr;
 			}
 		}
-		else
+		if (CurrentTarget && CurrentTarget->bIsDead)
+		{
+			CurrentTarget = nullptr;
+			Targets.Remove(CurrentTarget);
+		}
+		if (CurrentTarget && !CurrentTarget->bIsDead)
 		{
 			GetAbilitySystemComponent()->TryActivateAbilitiesByTag(FGameplayTagContainer(TAG_Turret_Attack),false);
 		}
@@ -164,6 +165,16 @@ void ACombatTower::ForceCheckDetection()
 	{
 		CurrentTarget = Targets[0];
 		bIsTargetAvailable = true;
+	}
+}
+
+void ACombatTower::InitializeTower(UTurretDefinition* Def)
+{
+	TowerData = Def->TowerData;
+	CombatComponent->AssignDataAndInitialize(Def->CombatData);
+	if (TowerData)
+	{
+		StaticMesh->SetStaticMesh(TowerData->Mesh);
 	}
 }
 

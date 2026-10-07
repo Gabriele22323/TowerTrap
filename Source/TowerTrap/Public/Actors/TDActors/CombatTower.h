@@ -7,6 +7,7 @@
 #include "NativeGameplayTags.h"
 #include "Components/SphereComponent.h"
 #include "Data/TD_DataAssets/TurretData.h"
+#include "Data/TD_DataAssets/TurretDefinition.h"
 #include "GameFramework/Pawn.h"
 #include "CombatTower.generated.h"
 
@@ -62,4 +63,6 @@ public:
 	void BindDelegates();
 	UFUNCTION(BlueprintCallable,CallInEditor)
 	void ForceCheckDetection();
+	UFUNCTION(BlueprintCallable)
+	void InitializeTower(UTurretDefinition* Def);
 };
