@@ -30,11 +30,20 @@ public:
 	TObjectPtr<UCombatComponent> CombatComponent;
 	UPROPERTY(BlueprintReadWrite,EditAnywhere, meta=(ExposeOnSpawn))
 	TObjectPtr<UGroundUnitData> CombatUnitData;
+	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
+	bool bIsDead = false;
 	
 	UFUNCTION()
 	void BindDelegates();
+	UFUNCTION()
+	void TimedDestroy();
+	
+	void HealthChange(const FOnAttributeChangeData& Data);
 	
 	void ChangeMovementSpeed(const FOnAttributeChangeData& Data);
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	
+	UFUNCTION()
+	void Death();
 };

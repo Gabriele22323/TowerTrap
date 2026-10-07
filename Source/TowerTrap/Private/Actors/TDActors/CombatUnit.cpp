@@ -4,9 +4,15 @@
 #include "Actors/TDActors/CombatUnit.h"
 
 #include "AbilitySystemComponent.h"
+#include "AIController.h"
+#include "BrainComponent.h"
+#include "NativeGameplayTags.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Components/CapsuleComponent.h"
 #include "Data/AttributeSets/CharacterAttributes.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+UE_DEFINE_GAMEPLAY_TAG(TAG_CombatUnit_State_Dead, "CombatUnit.State.Dead");
 
 // Sets default values
 ACombatUnit::ACombatUnit()
@@ -46,6 +52,20 @@ void ACombatUnit::BindDelegates()
 	UAbilitySystemComponent* ASC = CombatComponent->GetAbilitySystemComponent();
 	ASC->GetGameplayAttributeValueChangeDelegate(UCharacterAttributes::GetMovementSpeedAttribute()).AddUObject(this, &ACombatUnit::ChangeMovementSpeed);
 	GetCharacterMovement()->MaxWalkSpeed = ASC->GetNumericAttribute(UCharacterAttributes::GetMovementSpeedAttribute());
+	ASC->GetGameplayAttributeValueChangeDelegate(UCharacterAttributes::GetHealthAttribute()).AddUObject(this, &ACombatUnit::HealthChange);
+}
+
+void ACombatUnit::TimedDestroy()
+{
+	Destroy();
+}
+
+void ACombatUnit::HealthChange(const FOnAttributeChangeData& Data)
+{
+	if (Data.NewValue <= 0 && !bIsDead)
+	{
+		Death(); //I wish I could too
+	}
 }
 
 void ACombatUnit::ChangeMovementSpeed(const FOnAttributeChangeData& Data)
@@ -56,5 +76,25 @@ void ACombatUnit::ChangeMovementSpeed(const FOnAttributeChangeData& Data)
 UAbilitySystemComponent* ACombatUnit::GetAbilitySystemComponent() const
 {
 	return CombatComponent->AbilitySystemComponent;
+}
+
+void ACombatUnit::Death()
+{
+	AAIController* AIC = UAIBlueprintHelperLibrary::GetAIController(this);
+	if (AIC)
+	{
+		if (AIC->GetBrainComponent())
+		{
+			AIC->GetBrainComponent()->StopLogic("Dead");
+		}
+	}
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
+	GetCharacterMovement()->DisableMovement();
+	GetCapsuleComponent()->DestroyComponent();
+	CombatComponent->AbilitySystemComponent->AddLooseGameplayTag(TAG_CombatUnit_State_Dead);
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle,this,&ACombatUnit::TimedDestroy,3.0f,false);
+	bIsDead = true;
 }
 
