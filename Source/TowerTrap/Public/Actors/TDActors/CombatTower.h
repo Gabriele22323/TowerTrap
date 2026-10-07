@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CombatUnit.h"
 #include "NativeGameplayTags.h"
+#include "TurretSlot.h"
 #include "Components/SphereComponent.h"
 #include "Data/TD_DataAssets/TurretData.h"
 #include "Data/TD_DataAssets/TurretDefinition.h"
@@ -12,7 +13,7 @@
 #include "CombatTower.generated.h"
 
 UCLASS()
-class TOWERTRAP_API ACombatTower : public APawn, public IAbilitySystemInterface
+class TOWERTRAP_API ACombatTower : public APawn, public IAbilitySystemInterface, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -51,6 +52,8 @@ public:
 	int32 UpgradeLevel = 0;
 	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
 	bool bIsTargetAvailable;
+	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
+	TObjectPtr<ATurretSlot> OwningSlot;
 	
 	UFUNCTION(BlueprintCallable)
 	bool ApplyUpgrade();
@@ -65,4 +68,13 @@ public:
 	void ForceCheckDetection();
 	UFUNCTION(BlueprintCallable)
 	void InitializeTower(UTurretDefinition* Def);
+	UFUNCTION(BlueprintCallable)
+	void SetOwningSlot(ATurretSlot* Slot);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void Interact_Implementation() override;
+	UFUNCTION(BlueprintNativeEvent)
+	void Hovered_Implementation() override;
+	UFUNCTION(BlueprintNativeEvent)
+	void UnHovered_Implementation() override;
 };

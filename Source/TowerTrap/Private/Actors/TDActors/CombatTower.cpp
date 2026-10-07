@@ -178,3 +178,35 @@ void ACombatTower::InitializeTower(UTurretDefinition* Def)
 	}
 }
 
+void ACombatTower::SetOwningSlot(ATurretSlot* Slot)
+{
+	if (Slot)
+	{
+		OwningSlot = Slot;
+	}
+}
+
+void ACombatTower::UnHovered_Implementation_Implementation()
+{
+	if (OwningSlot)
+	{
+		IInteractable::Execute_UnHovered(OwningSlot);
+	}
+}
+
+void ACombatTower::Hovered_Implementation_Implementation()
+{
+	if (OwningSlot)
+	{
+		IInteractable::Execute_Hovered(OwningSlot);
+	}
+}
+
+void ACombatTower::Interact_Implementation_Implementation()
+{
+	if (OwningSlot)
+	{
+		IInteractable::Execute_Interact(OwningSlot);
+	}
+}
+
