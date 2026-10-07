@@ -5,7 +5,10 @@
 
 #include "AbilitySystemComponent.h"
 #include "Data/AttributeSets/CombatAttributeSet.h"
+#include "Engine/OverlapResult.h"
+#include "Misc/MapErrors.h"
 
+UE_DEFINE_GAMEPLAY_TAG(TAG_Turret_Attack, "Tower.Attack.Primary");
 
 // Sets default values
 ACombatTower::ACombatTower()
@@ -14,6 +17,7 @@ ACombatTower::ACombatTower()
 	PrimaryActorTick.bCanEverTick = true;
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
 	DetectionRange = CreateDefaultSubobject<USphereComponent>("DetectionRange");
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
 	DetectionRange->OnComponentBeginOverlap.AddDynamic(this,&ACombatTower::OnOverlapBegin);
 	CombatComponent->FOnInitialize.AddDynamic(this, &ACombatTower::BindDelegates);
 }
@@ -22,13 +26,40 @@ ACombatTower::ACombatTower()
 void ACombatTower::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (TowerData)
+	{
+		StaticMesh->SetStaticMesh(TowerData->Mesh);
+	}
 }
 
 // Called every frame
 void ACombatTower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (bIsTargetAvailable)
+	{
+		if (!CurrentTarget)
+		{
+			if (Targets.IsEmpty())
+			{
+				bIsTargetAvailable = false;
+				return;
+			}
+			else
+			{
+				CurrentTarget = Targets[0];
+			}
+			if (CurrentTarget->bIsDead)
+			{
+				Targets.Remove(CurrentTarget);
+				CurrentTarget = nullptr;
+			}
+		}
+		else
+		{
+			GetAbilitySystemComponent()->TryActivateAbilitiesByTag(FGameplayTagContainer(TAG_Turret_Attack),false);
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -72,7 +103,13 @@ void ACombatTower::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AAct
 {
 	if (OverlappedActor->ActorHasTag("Enemy"))
 	{
-		Targets.Add(OverlappedActor);
+		ACombatUnit* Target = Cast<ACombatUnit>(OverlappedActor);
+		Targets.Add(Target);
+		bIsTargetAvailable = true;
+		if (!CurrentTarget)
+		{
+			CurrentTarget = Target;
+		}
 	}
 }
 
@@ -80,7 +117,13 @@ void ACombatTower::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor
 {
 	if (OverlappedActor->ActorHasTag("Enemy"))
 	{
-		Targets.Remove(OverlappedActor);
+		ACombatUnit* Target = Cast<ACombatUnit>(OverlappedActor);
+		Targets.Remove(Target);
+	}
+	if (Targets.IsEmpty())
+	{
+		bIsTargetAvailable = false;
+		CurrentTarget = nullptr;
 	}
 }
 
@@ -88,5 +131,39 @@ void ACombatTower::BindDelegates()
 {
 	CombatComponent->AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UCombatAttributeSet::GetAttackRangeAttribute()).AddUObject(this,&ACombatTower::OnAttackRangeChanged);
 	DetectionRange->SetSphereRadius(CombatComponent->AbilitySystemComponent->GetNumericAttribute(UCombatAttributeSet::GetAttackRangeAttribute()));
+}
+
+void ACombatTower::ForceCheckDetection()
+{
+	Targets.Empty();
+	const float Detection = GetAbilitySystemComponent()->GetNumericAttribute(UCombatAttributeSet::GetAttackRangeAttribute());
+	TArray<FOverlapResult> Overlaps;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(GetOwner());
+	const bool bHasOverlaps = GetWorld()->OverlapMultiByChannel(
+		Overlaps,
+		GetOwner()->GetActorLocation(),
+		FQuat::Identity,
+		ECC_Pawn,
+		FCollisionShape::MakeSphere(Detection),
+		QueryParams
+	);
+	if (!bHasOverlaps)
+	{
+		return;
+	}
+	for (const FOverlapResult& Result : Overlaps)
+	{
+		ACombatUnit* CombatUnit = Cast<ACombatUnit>(Result.GetActor());
+		if (IsValid(CombatUnit) && !CombatUnit->bIsDead)
+		{
+			Targets.AddUnique(CombatUnit);
+		}
+	}
+	if (!Targets.IsEmpty())
+	{
+		CurrentTarget = Targets[0];
+		bIsTargetAvailable = true;
+	}
 }
 

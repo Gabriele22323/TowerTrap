@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CombatUnit.h"
+#include "NativeGameplayTags.h"
 #include "Components/SphereComponent.h"
 #include "Data/TD_DataAssets/TurretData.h"
 #include "GameFramework/Pawn.h"
@@ -33,6 +34,8 @@ public:
 	TObjectPtr<UCombatComponent> CombatComponent;
 	UPROPERTY(BlueprintReadOnly,EditAnywhere)
 	TObjectPtr<USphereComponent> DetectionRange;
+	UPROPERTY(BlueprintReadOnly,EditAnywhere)
+	TObjectPtr<UStaticMeshComponent> StaticMesh;
 	UPROPERTY(BlueprintReadWrite,EditAnywhere, meta=(ExposeOnSpawn))
 	TObjectPtr<UTurretData> TowerData;
 	
@@ -40,11 +43,13 @@ public:
 	void OnAttackRangeChanged(const FOnAttributeChangeData& Data);
 	
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	TArray<TObjectPtr<AActor>> Targets;
-	UPROPERTY()
-	TObjectPtr<AActor> CurrentTarget;
+	TArray<TObjectPtr<ACombatUnit>> Targets;
+	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
+	TObjectPtr<ACombatUnit> CurrentTarget;
 	UPROPERTY(BlueprintReadOnly,EditAnywhere)
 	int32 UpgradeLevel = 0;
+	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
+	bool bIsTargetAvailable;
 	
 	UFUNCTION(BlueprintCallable)
 	bool ApplyUpgrade();
@@ -55,4 +60,6 @@ public:
 	
 	UFUNCTION()
 	void BindDelegates();
+	UFUNCTION(BlueprintCallable,CallInEditor)
+	void ForceCheckDetection();
 };
