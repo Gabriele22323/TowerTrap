@@ -3,7 +3,9 @@
 
 #include "SubSystems/BattlefieldManager.h"
 
+#include "Actors/TDActors/CombatTower.h"
 #include "EntitySystem/MovieSceneEntitySystemRunner.h"
+#include "WorldPartition/Cook/WorldPartitionCookPackage.h"
 
 const TArray<FVector>& UBattlefieldManager::GetEndPoints() const
 {
@@ -43,6 +45,7 @@ void UBattlefieldManager::InitializeBattlefield()
 	checkf(!Waves[0].Wave.IsEmpty(),TEXT("BattlefieldManager | InitializeBattlefield() : Wave is empty!"));
 	WavesNum = Waves.Num();
 	Health = StartingHealth; 
+	BattlefieldState = EBattlefieldState::FirstPrepStage;
 	GetWorld()->GetTimerManager().SetTimer(NextWaveTimer,this,&UBattlefieldManager::StartNextWave,NextWaveTime);
 }
 
@@ -56,6 +59,7 @@ void UBattlefieldManager::InitializeBattlefieldWithParams(float FirstPrepTime, f
 	StartingHealth = TowerHealth;
 	Health = StartingHealth;
 	NextWaveTime = PrepTime;
+	BattlefieldState = EBattlefieldState::FirstPrepStage;
 	GetWorld()->GetTimerManager().SetTimer(NextWaveTimer,this,&UBattlefieldManager::StartNextWave,FirstPrepTime);
 }
 
@@ -102,6 +106,7 @@ void UBattlefieldManager::DecreaseEnemyCounter()
 		if (CurrentWave == WavesNum -1)
 		{
 			OnNoWavesRemaining.Broadcast();
+			BattlefieldState = EBattlefieldState::EndStage;
 		}
 		else
 		{
@@ -121,6 +126,7 @@ void UBattlefieldManager::StartNextWave()
 		Spawner->SetActorTickEnabled(true);
 		UE_LOG(LogTemp,Log,TEXT("%s : Tick status %hhd"),*Spawner->GetName(),Spawner->IsActorTickEnabled());
 	}
+	BattlefieldState = EBattlefieldState::WaveStage;
 	GetWorld()->GetTimerManager().ClearTimer(NextWaveTimer);
 }
 
@@ -132,6 +138,7 @@ void UBattlefieldManager::EnterPrepPhase()
 		OnWaveDefeated.Broadcast();
 		GetWorld()->GetTimerManager().SetTimer(NextWaveTimer,this,&UBattlefieldManager::StartNextWave,NextWaveTime);
 	}
+	BattlefieldState = EBattlefieldState::PrepStage;
 }
 
 void UBattlefieldManager::ForceStartNextWave()
@@ -183,6 +190,37 @@ void UBattlefieldManager::ApplyDamageToPlayer(const float DamageAmount)
 		if (Health <= 0)
 			OnHealthDepleted.Broadcast();
 	}
+}
+
+EBattlefieldState UBattlefieldManager::GetBattlefieldState() const
+{
+	return BattlefieldState;
+}
+
+void UBattlefieldManager::CacheLevelReference(ULevelStreamingDynamic* LevelReference)
+{
+	if (LevelReference != nullptr)
+	{
+		LoadedTDLevel = LevelReference;
+	}
+}
+
+ULevelStreamingDynamic* UBattlefieldManager::GetCachedLevelReference()
+{
+	return LoadedTDLevel;
+}
+
+void UBattlefieldManager::UnloadCachedLevel()
+{
+	LoadedTDLevel->SetShouldBeLoaded(false);
+	LoadedTDLevel->SetShouldBeVisible(false);
+	GetWorld()->GetTimerManager().ClearTimer(NextWaveTimer);
+}
+
+void UBattlefieldManager::LoadCachedLevel()
+{
+	LoadedTDLevel->SetShouldBeLoaded(true);
+	LoadedTDLevel->SetShouldBeVisible(true);
 }
 		
 		

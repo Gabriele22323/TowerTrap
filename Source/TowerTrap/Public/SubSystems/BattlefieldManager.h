@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Actors/WaveSpawner.h"
 #include "Data/TD_DataAssets/GroundUnitDefinition.h"
+#include "Engine/LevelStreamingDynamic.h"
+#include "Engine/SoftWorldReference.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "BattlefieldManager.generated.h"
 
@@ -29,6 +31,15 @@ struct FEnemyWave
 	{
 		Wave = NewWave;
 	}
+};
+
+UENUM(BlueprintType)
+enum class EBattlefieldState : uint8
+{
+	FirstPrepStage UMETA(DisplayName="FirstPrepStage"),
+	WaveStage UMETA(DisplayName="WaveStage"),
+	PrepStage UMETA(DisplayName="PrepStage"),
+	EndStage UMETA(DisplayName="EndStage"),
 };
 
 UCLASS()
@@ -129,4 +140,26 @@ public:
 	void SetHealth(float NewHealth,bool Broadcast);
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageToPlayer(float DamageAmount);
+	
+	//Battlefield state
+private:
+	UPROPERTY(BlueprintGetter = GetBattlefieldState)
+	EBattlefieldState BattlefieldState = EBattlefieldState::FirstPrepStage;
+public:
+	UFUNCTION(BlueprintCallable)
+	EBattlefieldState GetBattlefieldState() const;
+	
+	//Level streaming cache for unloading
+private:
+	UPROPERTY(BlueprintGetter = GetCachedLevelReference, BlueprintSetter = CacheLevelReference)
+	TObjectPtr<ULevelStreamingDynamic> LoadedTDLevel;
+public:
+	UFUNCTION(BlueprintCallable)
+	void CacheLevelReference(ULevelStreamingDynamic* LevelReference);
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	ULevelStreamingDynamic* GetCachedLevelReference();
+	UFUNCTION(BlueprintCallable)
+	void UnloadCachedLevel();
+	UFUNCTION(BlueprintCallable)
+	void LoadCachedLevel();
 };
