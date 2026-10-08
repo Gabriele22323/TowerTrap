@@ -19,7 +19,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float SafeRange = 150; //indicates the distance needed from the last spawned actor for another to spawn
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	ACombatUnit* LastSpawnedPawn;
+	ACombatUnit* LastSpawnedPawn = nullptr;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FReadyToSpawnSignature ReadyToSpawn;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)

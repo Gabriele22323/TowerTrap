@@ -37,13 +37,26 @@ void UBattlefieldManager::ClearSpawners()
 
 void UBattlefieldManager::InitializeBattlefield()
 {
-	CurrentWave = 0;
+	CurrentWave = -1;
 	CurrentEnemy = 0;
 	bNoMoreEnemyInQueue = false;
 	checkf(!Waves[0].Wave.IsEmpty(),TEXT("BattlefieldManager | InitializeBattlefield() : Wave is empty!"));
-	Waves[CurrentWave].Wave.GenerateKeyArray(ReferenceMap);
+	WavesNum = Waves.Num();
+	Health = StartingHealth; 
+	GetWorld()->GetTimerManager().SetTimer(NextWaveTimer,this,&UBattlefieldManager::StartNextWave,NextWaveTime);
+}
+
+void UBattlefieldManager::InitializeBattlefieldWithParams(float FirstPrepTime, float PrepTime, float TowerHealth)
+{
+	CurrentWave = -1;
+	CurrentEnemy = 0;
+	bNoMoreEnemyInQueue = false;
+	checkf(!Waves[0].Wave.IsEmpty(),TEXT("BattlefieldManager | InitializeBattlefield() : Wave is empty!"));
+	WavesNum = Waves.Num();
+	StartingHealth = TowerHealth;
 	Health = StartingHealth;
-	UE_LOG(LogTemp,Error,TEXT("Waves class number : %d"), Waves[CurrentWave].Wave.GetMaxIndex());
+	NextWaveTime = PrepTime;
+	GetWorld()->GetTimerManager().SetTimer(NextWaveTimer,this,&UBattlefieldManager::StartNextWave,FirstPrepTime);
 }
 
 UGroundUnitDefinition* UBattlefieldManager::GetNextGroundUnit()
@@ -57,7 +70,7 @@ UGroundUnitDefinition* UBattlefieldManager::GetNextGroundUnit()
 		}
 		else
 		{
-			if (Waves[CurrentWave].Wave.GetMaxIndex()-3 >= CurrentEnemy) //if there are more enemy types
+			if (CurrentEnemy < Waves[CurrentWave].Wave.Num() -1) //if there are more enemy types
 			{
 				UE_LOG(LogTemp,Log,TEXT("Loading next enemy type..."));
 				if (*Waves[CurrentWave].Wave.Find(ReferenceMap[CurrentEnemy+1]) > 0) //if there are still enemies of this type
@@ -86,17 +99,27 @@ void UBattlefieldManager::DecreaseEnemyCounter()
 	EnemyCounter--;
 	if (EnemyCounter == 0)
 	{
-		EnterPrepPhase();
+		if (CurrentWave == WavesNum -1)
+		{
+			OnNoWavesRemaining.Broadcast();
+		}
+		else
+		{
+			EnterPrepPhase();
+		}
 	}
 }
 
 void UBattlefieldManager::StartNextWave()
 {
 	CurrentWave++;
+	Waves[CurrentWave].Wave.GenerateKeyArray(ReferenceMap);
+	UE_LOG(LogTemp,Log,TEXT("Started next wave"));
 	OnWaveStarted.Broadcast();
 	for (AWaveSpawner* Spawner : Spawners)
 	{
 		Spawner->SetActorTickEnabled(true);
+		UE_LOG(LogTemp,Log,TEXT("%s : Tick status %hhd"),*Spawner->GetName(),Spawner->IsActorTickEnabled());
 	}
 	GetWorld()->GetTimerManager().ClearTimer(NextWaveTimer);
 }
@@ -107,7 +130,7 @@ void UBattlefieldManager::EnterPrepPhase()
 	if (EnemyCounter == 0 && bNoMoreEnemyInQueue)
 	{
 		OnWaveDefeated.Broadcast();
-		GetWorld()->GetTimerManager().SetTimer(NextWaveTimer,this,&UBattlefieldManager::StartNextWave,120);
+		GetWorld()->GetTimerManager().SetTimer(NextWaveTimer,this,&UBattlefieldManager::StartNextWave,NextWaveTime);
 	}
 }
 

@@ -82,6 +82,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeBattlefield(); //sets value for first wave
 	UFUNCTION(BlueprintCallable)
+	void InitializeBattlefieldWithParams(float FirstPrepTime = 60.0f, float PrepTime = 90.0f, float TowerHealth = 20.0f); //fuck you unreal 
+	UFUNCTION(BlueprintCallable)
 	UGroundUnitDefinition* GetNextGroundUnit();
 	
 	//Enemy Handling
@@ -93,6 +95,10 @@ public:
 	FNoParamDelegate OnWaveDefeated;
 	UPROPERTY(BlueprintAssignable,BlueprintCallable)
 	FNoParamDelegate OnWaveStarted;
+	UPROPERTY(BlueprintAssignable,BlueprintCallable)
+	FNoParamDelegate OnNoWavesRemaining;
+	UPROPERTY(BlueprintReadOnly)
+	int32 WavesNum = 0;
 	UFUNCTION(BlueprintCallable)
 	void StartNextWave(); //re-enables all spawner and increases currentWave counter
 	UFUNCTION(BlueprintCallable)

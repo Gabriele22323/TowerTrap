@@ -17,6 +17,7 @@ AWaveSpawner::AWaveSpawner()
 void AWaveSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+	this->SetActorTickEnabled(false);
 	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->AddSpawner(this);
 }
 
@@ -24,7 +25,14 @@ void AWaveSpawner::BeginPlay()
 void AWaveSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (GetDistanceTo(LastSpawnedPawn) > SafeRange)
+	if (LastSpawnedPawn)
+	{
+		if (GetDistanceTo(LastSpawnedPawn) > SafeRange || LastSpawnedPawn->bIsDead)
+		{
+			SpawnNextUnit();
+		}
+	}
+	else
 	{
 		SpawnNextUnit();
 	}
@@ -32,18 +40,18 @@ void AWaveSpawner::Tick(float DeltaTime)
 
 bool AWaveSpawner::SpawnNextUnit()
 {
-	UE_LOG(LogTemp,Log,TEXT("Spawning next unit..."));
+	UE_LOG(LogTemp,Log,TEXT("%s : Spawning next unit..."),*GetName());
 	TObjectPtr<UGroundUnitDefinition> CharacterData =  GetGameInstance()->GetSubsystem<UBattlefieldManager>()->GetNextGroundUnit();
 	if (CharacterData != nullptr)
 	{
 		const FTransform Transform = GetActorTransform();
-		AActor* Actor = GetWorld()->SpawnActorDeferred<ACombatUnit>(PawnClass,Transform,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn); //spawn without initialization
-		LastSpawnedPawn = Cast<ACombatUnit>(Actor);
+		LastSpawnedPawn = GetWorld()->SpawnActorDeferred<ACombatUnit>(PawnClass,Transform,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn); //spawn without initialization
 		LastSpawnedPawn->Tags.Add("Enemy");
 		LastSpawnedPawn->CombatUnitData = CharacterData->UnitData;
 		LastSpawnedPawn->FinishSpawning(Transform); //initialize actor
 		LastSpawnedPawn->CombatComponent->AssignDataAndInitialize(CharacterData->CombatData);
 		GetGameInstance()->GetSubsystem<UBattlefieldManager>()->EnemyCounter++;
+		UE_LOG(LogTemp,Log,TEXT("%s : Finished spawning | %s"),*GetName(),*LastSpawnedPawn->GetName());
 		return true;
 	}
 	else
