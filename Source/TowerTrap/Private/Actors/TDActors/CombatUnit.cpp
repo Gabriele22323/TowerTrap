@@ -12,6 +12,7 @@
 #include "Data/AttributeSets/CharacterAttributes.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GeometryCollection/GeometryCollectionSimulationTypes.h"
+#include "SubSystems/EconomySubsystem.h"
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_CombatUnit_State_Dead, "CombatUnit.State.Dead");
 
@@ -97,5 +98,6 @@ void ACombatUnit::Death()
 	FTimerHandle Handle;
 	GetWorldTimerManager().SetTimer(Handle,this,&ACombatUnit::TimedDestroy,3.0f,false);
 	bIsDead = true;
+	GetGameInstance()->GetSubsystem<UEconomySubsystem>()->AddCurrency(CombatComponent->AbilitySystemComponent->GetNumericAttribute(UCharacterAttributes::GetCurrencyAcquiredOnKillAttribute()));
 }
 

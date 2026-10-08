@@ -33,4 +33,7 @@ public:
 		UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FGameplayAttributeData DamageToTower;
 		ATTRIBUTE_ACCESSORS_BASIC(UCharacterAttributes,DamageToTower);
+		UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		FGameplayAttributeData CurrencyAcquiredOnKill;
+		ATTRIBUTE_ACCESSORS_BASIC(UCharacterAttributes,CurrencyAcquiredOnKill);
 };
