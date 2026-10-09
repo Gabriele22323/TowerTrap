@@ -32,4 +32,6 @@ public:
 	FUpgrade Upgrade;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UStaticMesh> Mesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Price;
 };
