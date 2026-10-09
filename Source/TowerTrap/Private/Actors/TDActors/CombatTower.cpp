@@ -23,6 +23,7 @@ ACombatTower::ACombatTower()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
 	StaticMesh->SetupAttachment(RootComponent);
 	DetectionRange->OnComponentBeginOverlap.AddDynamic(this,&ACombatTower::OnOverlapBegin);
+	DetectionRange->OnComponentEndOverlap.AddDynamic(this,&ACombatTower::OnOverlapEnd);
 	CombatComponent->FOnInitialize.AddDynamic(this, &ACombatTower::BindDelegates);
 }
 
@@ -111,6 +112,7 @@ void ACombatTower::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AAct
 		ACombatUnit* Target = Cast<ACombatUnit>(OverlappedActor);
 		Targets.Add(Target);
 		bIsTargetAvailable = true;
+		Target->TargetingTowers.Add(this);
 		if (!CurrentTarget)
 		{
 			CurrentTarget = Target;
@@ -118,12 +120,17 @@ void ACombatTower::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AAct
 	}
 }
 
-void ACombatTower::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OverlappedActor,UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult)
+void ACombatTower::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OverlappedActor,UPrimitiveComponent* PrimitiveComponent, int Index)
 {
 	if (OverlappedActor->ActorHasTag("Enemy"))
 	{
 		ACombatUnit* Target = Cast<ACombatUnit>(OverlappedActor);
 		Targets.Remove(Target);
+		if (CurrentTarget == Target)
+		{
+			CurrentTarget = nullptr;
+		}
+		Target->TargetingTowers.Remove(this);
 	}
 	if (Targets.IsEmpty())
 	{

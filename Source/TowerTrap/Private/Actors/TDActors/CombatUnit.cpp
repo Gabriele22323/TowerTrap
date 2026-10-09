@@ -7,11 +7,12 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "NativeGameplayTags.h"
+#include "Actors/TDActors/CombatTower.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/AttributeSets/CharacterAttributes.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GeometryCollection/GeometryCollectionSimulationTypes.h"
+#include "SubSystems/BattlefieldManager.h"
 #include "SubSystems/EconomySubsystem.h"
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_CombatUnit_State_Dead, "CombatUnit.State.Dead");
@@ -47,6 +48,15 @@ void ACombatUnit::Tick(float DeltaTime)
 void ACombatUnit::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void ACombatUnit::ArrivedAtEndpoint()
+{
+	for (auto Tower : TargetingTowers)
+	{
+		Tower->Targets.Remove(this);
+	}
+	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->DecreaseEnemyCounter();
 }
 
 void ACombatUnit::BindDelegates()
@@ -98,6 +108,11 @@ void ACombatUnit::Death()
 	FTimerHandle Handle;
 	GetWorldTimerManager().SetTimer(Handle,this,&ACombatUnit::TimedDestroy,3.0f,false);
 	bIsDead = true;
+	GetGameInstance()->GetSubsystem<UBattlefieldManager>()->DecreaseEnemyCounter();
+	for (auto Tower : TargetingTowers)
+	{
+		Tower->Targets.Remove(this);
+	}
 	GetGameInstance()->GetSubsystem<UEconomySubsystem>()->AddCurrency(CombatComponent->AbilitySystemComponent->GetNumericAttribute(UCharacterAttributes::GetCurrencyAcquiredOnKillAttribute()));
 }
 

@@ -61,7 +61,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult);
 	UFUNCTION(BlueprintCallable)
-	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index, bool Sweep, const FHitResult& SweepResult);
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent,AActor* OverlappedActor, UPrimitiveComponent* PrimitiveComponent, int Index);
 	
 	UFUNCTION()
 	void BindDelegates();

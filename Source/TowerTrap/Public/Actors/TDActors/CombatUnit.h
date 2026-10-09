@@ -8,6 +8,8 @@
 #include "GameFramework/Character.h"
 #include "CombatUnit.generated.h"
 
+class ACombatTower;
+
 UCLASS()
 class TOWERTRAP_API ACombatUnit : public ACharacter, public IAbilitySystemInterface
 {
@@ -32,6 +34,11 @@ public:
 	TObjectPtr<UGroundUnitData> CombatUnitData;
 	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
 	bool bIsDead = false;
+	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
+	TArray<TObjectPtr<ACombatTower>> TargetingTowers;
+	
+	UFUNCTION(BlueprintCallable)
+	void ArrivedAtEndpoint();
 	
 	UFUNCTION()
 	void BindDelegates();
