@@ -45,7 +45,12 @@ bool AWaveSpawner::SpawnNextUnit()
 	if (CharacterData != nullptr)
 	{
 		const FTransform Transform = GetActorTransform();
-		LastSpawnedPawn = GetWorld()->SpawnActorDeferred<ACombatUnit>(PawnClass,Transform,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn); //spawn without initialization
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Owner = this;
+		SpawnParameters.OverrideLevel = GetLevel();
+		SpawnParameters.bDeferConstruction = true;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		LastSpawnedPawn = GetWorld()->SpawnActor<ACombatUnit>(PawnClass,Transform,SpawnParameters); //spawn without initialization
 		LastSpawnedPawn->Tags.Add("Enemy");
 		LastSpawnedPawn->CombatUnitData = CharacterData->UnitData;
 		LastSpawnedPawn->FinishSpawning(Transform); //initialize actor

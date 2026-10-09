@@ -4,6 +4,7 @@
 #include "Actors/TDActors/TurretSlot.h"
 
 #include "AbilitySystemComponent.h"
+#include "EntitySystem/MovieSceneEntitySystemRunner.h"
 
 
 // Sets default values
@@ -31,7 +32,12 @@ void ATurretSlot::Tick(float DeltaTime)
 void ATurretSlot::SpawnTower(UTurretDefinition* TowerDefinition)
 {
 	FTransform Transform = TowerSpawnPoint->GetComponentTransform();
-	ACombatTower* Actor = GetWorld()->SpawnActorDeferred<ACombatTower>(TowerClass,Transform);
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = this;
+	SpawnParameters.OverrideLevel = GetLevel();
+	SpawnParameters.bDeferConstruction = true;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	ACombatTower* Actor = GetWorld()->SpawnActor<ACombatTower>(TowerClass,Transform,SpawnParameters);
 	if (!Actor)
 	{
 		UE_LOG(LogTemp,Log,TEXT("%s : Failed to spawn tower"),*GetName());
