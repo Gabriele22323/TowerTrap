@@ -108,6 +108,8 @@ public:
 	FNoParamDelegate OnWaveStarted;
 	UPROPERTY(BlueprintAssignable,BlueprintCallable)
 	FNoParamDelegate OnNoWavesRemaining;
+	UPROPERTY(BlueprintAssignable,BlueprintCallable)
+	FNoParamDelegate OnEnemySpawned;
 	UPROPERTY(BlueprintReadOnly)
 	int32 WavesNum = 0;
 	UFUNCTION(BlueprintCallable)

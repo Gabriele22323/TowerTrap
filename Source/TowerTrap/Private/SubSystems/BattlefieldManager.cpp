@@ -70,6 +70,7 @@ UGroundUnitDefinition* UBattlefieldManager::GetNextGroundUnit()
 		if (*Waves[CurrentWave].Wave.Find(ReferenceMap[CurrentEnemy]) > 0) //if there are still enemies of this type
 		{
 			Waves[CurrentWave].Wave.Add(ReferenceMap[CurrentEnemy],*Waves[CurrentWave].Wave.Find(ReferenceMap[CurrentEnemy])-1); //reduce enemy counter by 1
+			OnEnemySpawned.Broadcast();
 			return ReferenceMap[CurrentEnemy];
 		}
 		else
@@ -81,6 +82,7 @@ UGroundUnitDefinition* UBattlefieldManager::GetNextGroundUnit()
 				{
 					CurrentEnemy++;
 					Waves[CurrentWave].Wave.Add(ReferenceMap[CurrentEnemy],*Waves[CurrentWave].Wave.Find(ReferenceMap[CurrentEnemy])-1); //reduce enemy counter by 1
+					OnEnemySpawned.Broadcast();
 					return ReferenceMap[CurrentEnemy];
 				}
 			}
@@ -135,10 +137,10 @@ void UBattlefieldManager::EnterPrepPhase()
 	UE_LOG(LogTemp,Log,TEXT("EnemyCounter : %d	NoMoreEnemyInQueue : %hhd"),EnemyCounter,bNoMoreEnemyInQueue);
 	if (EnemyCounter == 0 && bNoMoreEnemyInQueue)
 	{
-		OnWaveDefeated.Broadcast();
 		GetWorld()->GetTimerManager().SetTimer(NextWaveTimer,this,&UBattlefieldManager::StartNextWave,NextWaveTime);
+		BattlefieldState = EBattlefieldState::PrepStage;
+		OnWaveDefeated.Broadcast();
 	}
-	BattlefieldState = EBattlefieldState::PrepStage;
 }
 
 void UBattlefieldManager::ForceStartNextWave()
