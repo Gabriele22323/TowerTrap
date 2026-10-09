@@ -120,6 +120,7 @@ void UBattlefieldManager::DecreaseEnemyCounter()
 void UBattlefieldManager::StartNextWave()
 {
 	CurrentWave++;
+	CurrentEnemy = 0;
 	Waves[CurrentWave].Wave.GenerateKeyArray(ReferenceMap);
 	UE_LOG(LogTemp,Log,TEXT("Started next wave"));
 	OnWaveStarted.Broadcast();

@@ -98,7 +98,9 @@ bool ACombatTower::ApplyUpgrade()
 			FGameplayEffectSpecHandle SpecHandle = CombatComponent->AbilitySystemComponent->MakeOutgoingSpec(TowerData->Upgrade.UpgradeEffect,1.0f, ContextHandle);
 			if (SpecHandle.IsValid())
 			{
+				UpgradeLevel++;
 				CombatComponent->AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+				return true;
 			}
 		}
 	}
