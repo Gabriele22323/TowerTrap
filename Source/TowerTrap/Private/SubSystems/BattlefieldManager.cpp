@@ -224,6 +224,12 @@ void UBattlefieldManager::LoadCachedLevel()
 	LoadedTDLevel->SetShouldBeLoaded(true);
 	LoadedTDLevel->SetShouldBeVisible(true);
 }
+
+void UBattlefieldManager::EmptyCachedLevel()
+{
+	UnloadCachedLevel();
+	LoadedTDLevel = nullptr;
+}
 		
 		
 		

@@ -164,4 +164,6 @@ public:
 	void UnloadCachedLevel();
 	UFUNCTION(BlueprintCallable)
 	void LoadCachedLevel();
+	UFUNCTION(BlueprintCallable)
+	void EmptyCachedLevel();
 };
